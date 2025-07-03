@@ -17,7 +17,7 @@
             WORKDIR /app
             COPY --from=builder /app/.next/standalone ./standalone
             CMD ["node", "standalone"]
-            # ---- 第 1 阶段：安装依赖 ----
+           # ---- 第 1 阶段：安装依赖 ----
 FROM node:20-alpine AS deps
 
 # 启用 corepack 并激活 pnpm（Node20 默认提供 corepack）
@@ -29,7 +29,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 
 # 安装所有依赖（含 devDependencies，后续会裁剪）
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --legacy-peer-deps
 
 # ---- 第 2 阶段：构建项目 ----
 FROM node:20-alpine AS builder
@@ -65,7 +65,7 @@ ENV PORT=3000
 ENV DOCKER_ENV=true
 
 # 从构建器中复制 standalone 输出
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./standalone
 # 从构建器中复制 public 和 .next/static 目录
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
@@ -77,4 +77,4 @@ USER nextjs
 EXPOSE 3000
 
 # 使用 node 直接运行 server.js
-CMD ["node", "server.js"] 
+CMD ["node", "server.js"]
