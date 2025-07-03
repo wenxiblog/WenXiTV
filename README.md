@@ -29,7 +29,7 @@
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/your-username/WenXiTV.git
+git clone https://github.com/wenxiblog/WenXiTV.git
 cd WenXiTV
 ```
 
